@@ -3,14 +3,14 @@
 # Get latest from https://github.com/github/gitignore/blob/main/Unity.gitignore
 #
 .utmp/
-/IMG-421 Assignment 3/[Ll]ibrary/
-/IMG-421 Assignment 3/[Tt]emp/
-/IMG-421 Assignment 3/[Oo]bj/
-/IMG-421 Assignment 3/[Bb]uild/
-/IMG-421 Assignment 3/[Bb]uilds/
-/IMG-421 Assignment 3/[Ll]ogs/
-/IMG-421 Assignment 3/[Uu]ser[Ss]ettings/
-/IMG-421 Assignment 3/library
+/IMG-421 Assignment 3 Boids/[Ll]ibrary/
+/IMG-421 Assignment 3 Boids/[Tt]emp/
+/IMG-421 Assignment 3 Boids/[Oo]bj/
+/IMG-421 Assignment 3 Boids/[Bb]uild/
+/IMG-421 Assignment 3 Boids/[Bb]uilds/
+/IMG-421 Assignment 3 Boids/[Ll]ogs/
+/IMG-421 Assignment 3 Boids/[Uu]ser[Ss]ettings/
+/IMG-421 Assignment 3 Boids/library
 *.log
 
 # By default unity supports Blender asset imports, *.blend1 blender files do not need to be commited to version control.
