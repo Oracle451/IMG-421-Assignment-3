@@ -46,45 +46,40 @@ public class Boid : MonoBehaviour
             sumVel -= delta.normalized * bSet.attractPush;
         }
 
-        // ____OBSTACLE_AVOIDANCE____ (best fan-ray method)
+        // ____OBSTACLE_AVOIDANCE____ (Smoothed Fan-Ray)
         Vector3 avoidanceForce = Vector3.zero;
 
-        int rayCount = 7;                   // 5–9 is sweet spot; odd for center ray
-        float coneAngle = 90f;              // wider FOV = earlier/more natural avoidance (60–120°)
-        float maxAvoidDist = bSet.obstacleAvoidDist;  // e.g. 8–20 units; tune to ~1.5–2× boid speed
-        float avoidWeight = bSet.obstacleAvoidWeight * 1.5f;  // Make obstacles override flocking temporarily
+        int rayCount = 7;
+        float coneAngle = 90f;
+        float maxAvoidDist = bSet.obstacleAvoidDist;
+        float avoidWeight = bSet.obstacleAvoidWeight * 1.0f;
 
         Vector3 forward = vel.normalized;
 
         for (int i = 0; i < rayCount; i++)
         {
-            // Spread rays symmetrically across cone
+            // Note: Using transform.up instead of Vector3.up keeps the fan relative to the Boid's tilt
             float angle = -coneAngle / 2f + (coneAngle / (rayCount - 1)) * i;
-            Vector3 rayDir = Quaternion.AngleAxis(angle, Vector3.up) * forward;
+            Vector3 rayDir = Quaternion.AngleAxis(angle, transform.up) * forward;
 
             if (Physics.Raycast(pos, rayDir, out RaycastHit hit, maxAvoidDist, bSet.obstacleLayer))
             {
-                // Closer hit = stronger avoidance (inverse falloff)
-                float urgency = 1f - (hit.distance / maxAvoidDist);  // 0 at far, 1 at touching
-                urgency = Mathf.Pow(urgency, 2f);  // stronger curve for "panic" near obstacles
+                // Smooth exponential urgency
+                float urgency = 1f - (hit.distance / maxAvoidDist);
+                urgency = Mathf.Pow(urgency, 2f);
 
-                // Steer away: project perpendicular to ray (smooth slide-around)
-                Vector3 perp = Vector3.Cross(rayDir, hit.normal).normalized;
+                // SMOOTH STEER: Instead of complex cross products, just push away from the surface normal
+                // Adding the 'forward' vector ensures it glances off the rock instead of stopping
+                Vector3 avoidDir = hit.normal + forward;
 
-                // Bias to "outside" turn (helps avoid flipping back-and-forth)
-                if (Vector3.Dot(perp, transform.right) < 0f)
-                    perp = -perp;
-
-                // Or simpler: steer away from hit point
-                // Vector3 perp = (pos - hit.point).normalized;
-
-                avoidanceForce += perp * urgency * avoidWeight;
+                // Add to our total avoidance force, keeping the urgency scale!
+                avoidanceForce += avoidDir.normalized * urgency * avoidWeight;
             }
         }
 
+        // Do NOT normalize avoidanceForce here. Let the 'urgency' scale dictate its size.
         if (avoidanceForce != Vector3.zero)
         {
-            avoidanceForce.Normalize();  // optional: cap max strength
             sumVel += avoidanceForce;
         }
 

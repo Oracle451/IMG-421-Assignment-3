@@ -39,7 +39,7 @@ public class Spawner : MonoBehaviour
     public GameObject BoidPrefab;
     public Transform boidAnchor;   
 
-    public int numBoids = 100;
+    public int numBoids = 50;
     public float spawnRadius = 100f;
     public float spawnDelay = 0.1f;
 
