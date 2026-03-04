@@ -25,7 +25,7 @@ public class Boid : MonoBehaviour
     {
         if (collision.collider.CompareTag("Asteroid"))
         {
-            Debug.Log($"Boid {gameObject.name} actually hit asteroid {collision.collider.name}!");
+            Debug.Log($"Sir, a boid has hit the second {collision.collider.name}!");
         }
     }
 

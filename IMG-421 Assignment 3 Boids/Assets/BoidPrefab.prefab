@@ -244,7 +244,6 @@ GameObject:
   - component: {fileID: 3581559280166964527}
   - component: {fileID: 8732838925217460113}
   - component: {fileID: -7704492666513632974}
-  - component: {fileID: -3776508932977123498}
   m_Layer: 0
   m_Name: BoidPrefab
   m_TagString: Untagged
@@ -446,24 +445,3 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   neighbors: []
---- !u!135 &-3776508932977123498
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7178935921968764152}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Radius: 1.5
-  m_Center: {x: 0, y: 0, z: 0}
