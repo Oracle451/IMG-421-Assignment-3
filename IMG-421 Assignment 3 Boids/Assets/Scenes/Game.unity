@@ -5254,6 +5254,7 @@ MonoBehaviour:
   asteroidPrefab: {fileID: 353933971152343981, guid: f4bee15f7e775d642b228b7876f65a5d, type: 3}
   asteroidCount: 30
   spawnRadius: 50
+  minAsteroidSpacing: 10
   minScale: 1
   maxScale: 5
 --- !u!4 &656173720
@@ -5516,7 +5517,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   BoidPrefab: {fileID: 7178935921968764152, guid: d79e32c9203bb0244a2b16e03aa5852b, type: 3}
   boidAnchor: {fileID: 0}
-  numBoids: 100
+  numBoids: 50
   spawnRadius: 100
   spawnDelay: 0.1
   boidSettings:
@@ -5530,11 +5531,11 @@ MonoBehaviour:
     attractPull: 1
     attractPush: 20
     velocityEasing: 0.03
-    obstacleAvoidDist: 10
-    obstacleAvoidWeight: 5
+    obstacleAvoidDist: 30
+    obstacleAvoidWeight: 15
     obstacleLayer:
       serializedVersion: 2
-      m_Bits: 64
+      m_Bits: 128
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

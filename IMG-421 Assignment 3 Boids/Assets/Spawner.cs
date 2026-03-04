@@ -19,10 +19,10 @@ public class BoidSettings
     public float attractPush = 20f; // Very strong to spread out the Boids
    
     [Header("This determines how quickly Boids can turn and is [0…1]")]
-    public float velocityEasing = 0.03f;
+    public float velocityEasing = 0.5f;
 
     [Header("Obstacle Avoidance")]
-    public float obstacleAvoidDist = 10f;
+    public float obstacleAvoidDist = 30f;
     public float obstacleAvoidWeight = 5f;
     public LayerMask obstacleLayer;
 }
@@ -39,7 +39,7 @@ public class Spawner : MonoBehaviour
     public GameObject BoidPrefab;
     public Transform boidAnchor;   
 
-    public int numBoids = 50;
+    public int numBoids = 1;
     public float spawnRadius = 100f;
     public float spawnDelay = 0.1f;
 

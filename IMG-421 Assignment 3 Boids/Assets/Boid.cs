@@ -21,11 +21,11 @@ public class Boid : MonoBehaviour
     }
 
     // Change this function in your Boid script:
-    void OnTriggerEnter(Collider other) 
+    void OnCollisionEnter(Collision collision)
     {
-        if (other.CompareTag("Asteroid"))
+        if (collision.collider.CompareTag("Asteroid"))
         {
-            Debug.Log($"Boid {gameObject.name} phased through asteroid {other.name}!");
+            Debug.Log($"Boid {gameObject.name} actually hit asteroid {collision.collider.name}!");
         }
     }
 
@@ -46,40 +46,62 @@ public class Boid : MonoBehaviour
             sumVel -= delta.normalized * bSet.attractPush;
         }
 
-        // ____OBSTACLE_AVOIDANCE____ (Smoothed Fan-Ray)
+        // ____OBSTACLE_AVOIDANCE____
         Vector3 avoidanceForce = Vector3.zero;
 
+        // Number of rays to cast from the boid in the fan
         int rayCount = 7;
+        // Total spread angle of the ray fan
         float coneAngle = 90f;
+        // Maximum distance to consider an obstacle threatening
         float maxAvoidDist = bSet.obstacleAvoidDist;
+        // How strongly to react to obstacles
         float avoidWeight = bSet.obstacleAvoidWeight * 1.0f;
 
+        // Current forward direction
         Vector3 forward = vel.normalized;
 
         for (int i = 0; i < rayCount; i++)
         {
-            // Note: Using transform.up instead of Vector3.up keeps the fan relative to the Boid's tilt
+            // Spread rays evenly across cone angle
             float angle = -coneAngle / 2f + (coneAngle / (rayCount - 1)) * i;
-            Vector3 rayDir = Quaternion.AngleAxis(angle, transform.up) * forward;
+            
+            // Horizontal and Vertical rays around the boids axis
+            Vector3 rayDirH = Quaternion.AngleAxis(angle, transform.up) * forward;
+            Vector3 rayDirV = Quaternion.AngleAxis(angle, transform.right) * forward;
 
-            if (Physics.Raycast(pos, rayDir, out RaycastHit hit, maxAvoidDist, bSet.obstacleLayer))
+            // Process both directions to cover a full 3d cone
+            foreach (Vector3 rayDir in new[] { rayDirH, rayDirV })
             {
-                // Smooth exponential urgency
-                float urgency = 1f - (hit.distance / maxAvoidDist);
-                urgency = Mathf.Pow(urgency, 2f);
+                // Sphere radius to cover the boid 
+                float sphereRadius = 1.5f;
 
-                // SMOOTH STEER: Instead of complex cross products, just push away from the surface normal
-                // Adding the 'forward' vector ensures it glances off the rock instead of stopping
-                Vector3 avoidDir = hit.normal + forward;
+                if (Physics.SphereCast(pos, sphereRadius, rayDir, out RaycastHit hit, maxAvoidDist, bSet.obstacleLayer))
+                {
+                    // 0 = Asteroid at max distance for detection and 1 = its at the front door
+                    float urgency = 1f - (hit.distance / maxAvoidDist);
+                    // Square it to have an exponential increase
+                    urgency = Mathf.Pow(urgency, 2f);
 
-                // Add to our total avoidance force, keeping the urgency scale!
-                avoidanceForce += avoidDir.normalized * urgency * avoidWeight;
+                    // hit.normal pushes away from the surface, adding forward creates a glancing angle so the boid slides off rather than stopping completely
+                    Vector3 avoidDir = hit.normal + forward;
+                    // Add this ray's contribution (multiple rays hitting multiple asteroids will add up)
+                    avoidanceForce += avoidDir.normalized * urgency * avoidWeight;
+
+                    // Red = this ray is detecting an obstacle
+                    Debug.DrawRay(pos, rayDir * hit.distance, Color.red, Time.fixedDeltaTime);
+                }
+                else
+                {
+                    // Green = this ray does not detect any obstacles
+                    Debug.DrawRay(pos, rayDir * maxAvoidDist, Color.green, Time.fixedDeltaTime);
+                }
             }
         }
 
-        // Do NOT normalize avoidanceForce here. Let the 'urgency' scale dictate its size.
         if (avoidanceForce != Vector3.zero)
         {
+            // Add the total avoidance steering force to the velocity sum
             sumVel += avoidanceForce;
         }
 
